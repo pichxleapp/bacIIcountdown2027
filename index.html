@@ -1,10 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#080d1b">
-  <meta name="description" content="A live countdown to BACII 2027.">
+
   <title>BACII 2027 — Countdown</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,731 +12,1013 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
-    /* =========================================================
-       1. DESIGN TOKENS
-    ========================================================= */
+    /* =========================================
+       ROOT & RESET
+    ========================================= */
+
     :root {
-      color-scheme: dark;
-      --font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      --color-bg: #080d1b;
-      --color-surface: rgba(255, 255, 255, 0.065);
-      --color-border: rgba(255, 255, 255, 0.13);
-      --color-text: #fff;
-      --color-muted: rgba(255, 255, 255, 0.64);
-      --color-accent: #4facfe;
-      --color-accent-bright: #00e7f5;
-      --shadow-card: 0 32px 90px rgba(0, 0, 0, 0.42);
-      --radius-card: 30px;
+      --bg-1: #070b16;
+      --bg-2: #101a33;
+      --bg-3: #16264a;
+
+      --accent: #4facfe;
+      --accent-2: #00f2fe;
+      --white: #ffffff;
+      --muted: rgba(255,255,255,.62);
+
+      --glass: rgba(255,255,255,.065);
+      --glass-border: rgba(255,255,255,.13);
     }
 
-    /* =========================================================
-       2. RESET & BASE
-    ========================================================= */
-    *,
-    *::before,
-    *::after {
+    * {
+      margin: 0;
+      padding: 0;
       box-sizing: border-box;
     }
 
     html {
-      min-width: 320px;
       scroll-behavior: smooth;
     }
 
     body {
       min-height: 100vh;
       min-height: 100svh;
-      margin: 0;
-      padding: clamp(16px, 3vw, 28px);
-      display: grid;
-      place-items: center;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 25px;
       overflow-x: hidden;
-      isolation: isolate;
-      font-family: var(--font-family);
-      color: var(--color-text);
+
+      font-family: 'Poppins', sans-serif;
+      color: var(--white);
+
       background:
-        radial-gradient(circle at 14% 18%, rgba(79, 172, 254, 0.19), transparent 32%),
-        radial-gradient(circle at 86% 82%, rgba(0, 231, 245, 0.12), transparent 32%),
-        linear-gradient(135deg, #070b16 0%, #101a33 55%, #16264a 100%);
+        radial-gradient(circle at 15% 20%, rgba(79,172,254,.20), transparent 30%),
+        radial-gradient(circle at 85% 80%, rgba(0,242,254,.13), transparent 30%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2), var(--bg-3));
     }
 
+    /* =========================================
+       ANIMATED BACKGROUND
+    ========================================= */
+
     body::before {
-      position: fixed;
-      z-index: -2;
-      inset: -50%;
       content: "";
-      pointer-events: none;
+      position: fixed;
+      inset: -50%;
+
       background: conic-gradient(
         from 0deg,
         transparent,
-        rgba(79, 172, 254, 0.075),
+        rgba(79,172,254,.08),
         transparent,
-        rgba(0, 231, 245, 0.06),
+        rgba(0,242,254,.07),
         transparent
       );
-      animation: background-rotation 28s linear infinite;
+
+      animation: rotateBG 25s linear infinite;
+      pointer-events: none;
+      z-index: -2;
     }
 
-    button,
-    input {
-      font: inherit;
+    @keyframes rotateBG {
+      to { transform: rotate(360deg); }
     }
 
-    /* =========================================================
-       3. BACKGROUND PARTICLES
-    ========================================================= */
     .particles {
       position: fixed;
-      z-index: -1;
       inset: 0;
       overflow: hidden;
       pointer-events: none;
+      z-index: -1;
     }
 
     .particle {
       position: absolute;
-      bottom: -12px;
-      width: 3px;
-      height: 3px;
+      background: rgba(255,255,255,.5);
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.55);
-      box-shadow: 0 0 10px rgba(79, 172, 254, 0.8);
-      animation: particle-float linear infinite;
+      box-shadow: 0 0 10px rgba(79,172,254,.8);
+      animation: floatParticle linear infinite;
     }
 
-    /* =========================================================
-       4. MAIN CARD
-    ========================================================= */
-    .countdown-card {
+    @keyframes floatParticle {
+      0% {
+        transform: translateY(110vh) scale(.5);
+        opacity: 0;
+      }
+      10%, 90% { opacity: 1; }
+      100% {
+        transform: translateY(-10vh) scale(1.2);
+        opacity: 0;
+      }
+    }
+
+    /* =========================================
+       MAIN CONTAINER
+    ========================================= */
+
+    .container {
+      position: relative;
       width: min(950px, 100%);
-      padding: clamp(26px, 5vw, 60px);
+      padding: clamp(25px, 5vw, 60px);
+
       text-align: center;
+
       background: linear-gradient(
         135deg,
-        rgba(255, 255, 255, 0.085),
-        rgba(255, 255, 255, 0.035)
+        rgba(255,255,255,.085),
+        rgba(255,255,255,.035)
       );
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-card);
-      box-shadow: var(--shadow-card), inset 0 1px 1px rgba(255, 255, 255, 0.08);
-      -webkit-backdrop-filter: blur(24px);
-      backdrop-filter: blur(24px);
-      animation: card-entrance 850ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
+
+      border: 1px solid var(--glass-border);
+      border-radius: 28px;
+
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+
+      box-shadow:
+        0 35px 100px rgba(0,0,0,.45),
+        inset 0 1px 1px rgba(255,255,255,.08);
+
+      animation: containerIn 1s ease-out;
     }
 
-    /* =========================================================
-       5. HEADER
-    ========================================================= */
-    .status-badge {
+    @keyframes containerIn {
+      from {
+        opacity: 0;
+        transform: translateY(35px) scale(.97);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* =========================================
+       HEADER
+    ========================================= */
+
+    .badge {
       display: inline-flex;
       align-items: center;
-      gap: 9px;
+      gap: 8px;
+
+      padding: 7px 14px;
       margin-bottom: 18px;
-      padding: 8px 15px;
-      color: var(--color-accent-bright);
-      background: rgba(0, 231, 245, 0.07);
-      border: 1px solid rgba(0, 231, 245, 0.17);
-      border-radius: 999px;
+
       font-size: 11px;
       font-weight: 600;
+      letter-spacing: 2px;
+
+      color: var(--accent-2);
+      background: rgba(0,242,254,.07);
+
+      border: 1px solid rgba(0,242,254,.15);
+      border-radius: 999px;
+    }
+
+    .badge-dot {
+      width: 7px;
+      height: 7px;
+
+      background: var(--accent-2);
+      border-radius: 50%;
+
+      box-shadow: 0 0 12px var(--accent-2);
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        opacity: .5;
+        transform: scale(.8);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1.2);
+      }
+    }
+
+    .title {
+      font-size: clamp(28px, 6vw, 64px);
+      line-height: 1.1;
+      font-weight: 800;
+      letter-spacing: -1px;
+
+      background: linear-gradient(
+        135deg,
+        #ffffff 10%,
+        #8fdcff 50%,
+        #00f2fe 100%
+      );
+
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      margin-top: 12px;
+      color: var(--muted);
+
+      font-size: clamp(12px, 2.5vw, 16px);
+      font-weight: 300;
+      letter-spacing: 1px;
+    }
+
+    /* =========================================
+       COUNTDOWN
+    ========================================= */
+
+    .countdown {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+
+      gap: clamp(10px, 2vw, 20px);
+      margin-top: clamp(25px, 5vw, 45px);
+    }
+
+    .box {
+      position: relative;
+      min-width: 0;
+
+      padding: clamp(15px, 3vw, 30px) 10px;
+
+      background: linear-gradient(
+        145deg,
+        rgba(255,255,255,.075),
+        rgba(0,0,0,.16)
+      );
+
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 18px;
+
+      overflow: hidden;
+
+      transition:
+        transform .35s ease,
+        border-color .35s ease,
+        box-shadow .35s ease;
+    }
+
+    .box::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+
+      width: 100%;
+      height: 1px;
+
+      background: linear-gradient(
+        90deg,
+        transparent,
+        var(--accent-2),
+        transparent
+      );
+
+      animation: shine 4s linear infinite;
+    }
+
+    @keyframes shine {
+      to { left: 100%; }
+    }
+
+    .box:hover {
+      transform: translateY(-8px) scale(1.025);
+      border-color: rgba(79,172,254,.35);
+      box-shadow: 0 15px 40px rgba(0,242,254,.10);
+    }
+
+    .number {
+      display: block;
+
+      font-size: clamp(28px, 6vw, 68px);
+      line-height: 1;
+      font-weight: 700;
+
+      color: white;
+      text-shadow: 0 0 25px rgba(79,172,254,.35);
+    }
+
+    .number.tick {
+      animation: numberTick .25s ease;
+    }
+
+    @keyframes numberTick {
+      50% {
+        transform: translateY(-4px) scale(1.04);
+        text-shadow: 0 0 35px rgba(0,242,254,.8);
+      }
+    }
+
+    .label {
+      display: block;
+      margin-top: 10px;
+
+      color: var(--accent-2);
+      font-size: clamp(10px, 1.8vw, 12px);
+      font-weight: 600;
+
       letter-spacing: 2px;
       text-transform: uppercase;
     }
 
-    .status-dot {
-      width: 7px;
-      height: 7px;
-      flex: 0 0 auto;
-      border-radius: 50%;
-      background: var(--color-accent-bright);
-      box-shadow: 0 0 12px var(--color-accent-bright);
-      animation: status-pulse 1.6s ease-in-out infinite;
-    }
+    /* =========================================
+       PROGRESS SECTION
+    ========================================= */
 
-    .page-title {
-      margin: 0;
-      font-size: clamp(2rem, 6vw, 4rem);
-      font-weight: 800;
-      line-height: 1.1;
-      letter-spacing: -1.5px;
-      color: #fff;
-      background: linear-gradient(135deg, #fff 10%, #8fdcff 55%, #00e7f5 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .page-subtitle {
-      margin: 12px 0 0;
-      color: var(--color-muted);
-      font-size: clamp(0.78rem, 2.2vw, 1rem);
-      font-weight: 300;
-      letter-spacing: 0.8px;
-    }
-
-    /* =========================================================
-       6. COUNTDOWN UNITS
-    ========================================================= */
-    .countdown-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: clamp(10px, 2vw, 20px);
-      margin-top: clamp(28px, 5vw, 46px);
-    }
-
-    .time-card {
-      position: relative;
-      min-width: 0;
-      overflow: hidden;
-      padding: clamp(17px, 3vw, 30px) 10px;
-      background: linear-gradient(
-        145deg,
-        rgba(255, 255, 255, 0.075),
-        rgba(0, 0, 0, 0.16)
-      );
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 18px;
-      transition:
-        transform 280ms ease,
-        border-color 280ms ease,
-        box-shadow 280ms ease;
-    }
-
-    .time-card::before {
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 1px;
-      content: "";
-      background: linear-gradient(90deg, transparent, var(--color-accent-bright), transparent);
-      animation: card-shine 4.5s linear infinite;
-    }
-
-    .time-card:hover {
-      transform: translateY(-6px);
-      border-color: rgba(79, 172, 254, 0.38);
-      box-shadow: 0 14px 36px rgba(0, 231, 245, 0.09);
-    }
-
-    .time-value {
-      display: block;
-      color: #fff;
-      font-size: clamp(1.8rem, 6vw, 4.25rem);
-      font-weight: 700;
-      line-height: 1;
-      font-variant-numeric: tabular-nums;
-      text-shadow: 0 0 25px rgba(79, 172, 254, 0.35);
-    }
-
-    .time-value.tick {
-      animation: number-tick 240ms ease;
-    }
-
-    .time-label {
-      display: block;
-      margin-top: 11px;
-      color: var(--color-accent-bright);
-      font-size: clamp(0.58rem, 1.6vw, 0.75rem);
-      font-weight: 600;
-      letter-spacing: clamp(1px, 0.45vw, 2.5px);
-      text-transform: uppercase;
-    }
-
-    /* =========================================================
-       7. PROGRESS
-    ========================================================= */
     .progress-section {
-      margin-top: clamp(28px, 5vw, 40px);
-      text-align: left;
+      margin-top: clamp(30px, 5vw, 45px);
     }
 
-    .progress-heading {
+    .progress-info {
       display: flex;
       justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 10px;
-      color: var(--color-muted);
+      align-items: center;
+
+      gap: 15px;
+      margin-bottom: 8px;
+
+      color: var(--muted);
       font-size: 12px;
     }
 
+    #progress-text {
+      color: var(--accent-2);
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      text-shadow: 0 0 10px rgba(0,242,254,.5);
+    }
+
+    /* Track */
+
     .progress-track {
+      position: relative;
       width: 100%;
-      height: 7px;
-      overflow: hidden;
-      background: rgba(255, 255, 255, 0.085);
+      height: 54px;
+
+      display: flex;
+      align-items: center;
+
+      --progress: 0%;
+    }
+
+    /* Actual progress bar */
+
+    .progress-bar {
+      position: relative;
+      width: 100%;
+      height: 9px;
+
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.05);
       border-radius: 999px;
+
+      overflow: hidden;
+      box-shadow: inset 0 0 8px rgba(0,0,0,.4);
     }
 
     .progress-fill {
-      width: 0;
+      position: relative;
+
+      width: 0%;
       height: 100%;
+
       border-radius: inherit;
-      background: linear-gradient(90deg, var(--color-accent-bright), var(--color-accent));
-      box-shadow: 0 0 15px rgba(0, 231, 245, 0.55);
-      transition: width 700ms ease;
+
+      background: linear-gradient(
+        90deg,
+        #0756d9,
+        #00c8ff,
+        #8be9ff
+      );
+
+      box-shadow:
+        0 0 10px #00c8ff,
+        0 0 22px rgba(0,200,255,.55);
+
+      transition: width 1s cubic-bezier(.22,1,.36,1);
+      overflow: hidden;
     }
 
-    /* =========================================================
-       8. FOOTER INFORMATION
-    ========================================================= */
-    .footer-info {
+    /* Shimmer effect */
+
+    .progress-fill::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+
+      background: linear-gradient(
+        110deg,
+        transparent 20%,
+        rgba(255,255,255,.85) 50%,
+        transparent 80%
+      );
+
+      animation: progressShimmer 2s linear infinite;
+    }
+
+    @keyframes progressShimmer {
+      from { transform: translateX(-100%); }
+      to { transform: translateX(100%); }
+    }
+
+    /* =========================================
+       SASUKE-STYLE RUNNER
+    ========================================= */
+
+    .sasuke-runner {
+      position: absolute;
+      z-index: 5;
+
+      width: 48px;
+      height: 48px;
+
+      top: 50%;
+      left: clamp(
+        24px,
+        var(--progress),
+        calc(100% - 24px)
+      );
+
+      transform: translate(-50%, -50%);
+
+      filter: drop-shadow(0 0 8px #00c8ff);
+
+      transition: left 1s cubic-bezier(.22,1,.36,1);
+
+      animation: runnerBounce .32s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+
+    .sasuke-runner svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    /* Chakra aura */
+
+    .chakra-aura {
+      fill: rgba(0,180,255,.22);
+      stroke: #00c8ff;
+      stroke-width: 1.5;
+
+      animation: chakraPulse .7s ease-in-out infinite alternate;
+    }
+
+    @keyframes runnerBounce {
+      from { margin-top: -3px; }
+      to { margin-top: 3px; }
+    }
+
+    @keyframes chakraPulse {
+      from {
+        opacity: .35;
+        filter: drop-shadow(0 0 2px #00c8ff);
+      }
+      to {
+        opacity: 1;
+        filter: drop-shadow(0 0 8px #00c8ff);
+      }
+    }
+
+    /* Chakra trail */
+
+    .chakra-trail {
+      position: absolute;
+      top: 50%;
+
+      left: 0;
+      width: var(--progress);
+      height: 2px;
+
+      transform: translateY(-50%);
+      pointer-events: none;
+
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(0,200,255,.4),
+        #00c8ff
+      );
+
+      filter: blur(2px);
+      opacity: .8;
+    }
+
+    /* Completion */
+
+    .progress-track.complete .progress-fill {
+      background: linear-gradient(
+        90deg,
+        #00c853,
+        #69f0ae,
+        #b9f6ca
+      );
+
+      box-shadow: 0 0 20px rgba(0,255,130,.8);
+    }
+
+    .progress-track.complete .sasuke-runner {
+      filter: drop-shadow(0 0 12px #00ff88);
+    }
+
+    /* =========================================
+       BOTTOM INFORMATION
+    ========================================= */
+
+    .info-container {
       display: flex;
       flex-direction: column;
       align-items: center;
+
       gap: 15px;
       margin-top: 25px;
     }
 
     .current-time {
-      color: var(--color-muted);
+      color: var(--muted);
       font-size: 12px;
-      letter-spacing: 0.35px;
+      letter-spacing: .5px;
     }
 
-    .current-time strong,
-    .target-date strong {
-      color: #fff;
-      font-weight: 600;
+    .current-time strong {
+      color: white;
+      font-weight: 500;
     }
 
     .target-date {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+
+      gap: 5px;
       padding: 9px 18px;
-      color: var(--color-muted);
-      background: rgba(255, 255, 255, 0.045);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 999px;
+
+      color: var(--muted);
       font-size: 12px;
+
+      background: rgba(255,255,255,.045);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 999px;
     }
 
-    /* =========================================================
-       9. COMPLETED STATE
-    ========================================================= */
-    .completion-message {
+    .target-date strong {
+      color: white;
+      font-weight: 600;
+    }
+
+    .finished {
       grid-column: 1 / -1;
-      padding: 38px 10px;
-      color: #fff;
-      background: linear-gradient(135deg, #fff, var(--color-accent-bright));
-      background-clip: text;
+      padding: 40px 10px;
+
+      font-size: clamp(20px, 5vw, 48px);
+      font-weight: 800;
+
+      background: linear-gradient(135deg, #ffffff, #00f2fe);
+
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      font-size: clamp(1.35rem, 5vw, 3rem);
-      font-weight: 800;
+
       animation: celebration 1s ease-in-out infinite alternate;
     }
 
-    /* =========================================================
-       10. ANIMATIONS
-    ========================================================= */
-    @keyframes background-rotation {
-      to { transform: rotate(360deg); }
-    }
-
-    @keyframes particle-float {
-      0% { transform: translateY(0) scale(0.5); opacity: 0; }
-      10%, 90% { opacity: 1; }
-      100% { transform: translateY(-110vh) scale(1.2); opacity: 0; }
-    }
-
-    @keyframes card-entrance {
-      from { opacity: 0; transform: translateY(28px) scale(0.98); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
-    @keyframes status-pulse {
-      0%, 100% { opacity: 0.55; transform: scale(0.85); }
-      50% { opacity: 1; transform: scale(1.15); }
-    }
-
-    @keyframes card-shine {
-      to { left: 100%; }
-    }
-
-    @keyframes number-tick {
-      50% {
-        transform: translateY(-3px) scale(1.035);
-        text-shadow: 0 0 32px rgba(0, 231, 245, 0.75);
-      }
-    }
-
     @keyframes celebration {
-      to { transform: scale(1.035); }
+      from { transform: scale(1); }
+      to { transform: scale(1.04); }
     }
 
-    /* =========================================================
-       11. RESPONSIVE LAYOUT
-    ========================================================= */
-    @media (max-width: 768px) {
-      .countdown-card {
-        border-radius: 24px;
-      }
+    /* =========================================
+       RESPONSIVE DESIGN
+    ========================================= */
 
-      .countdown-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 14px;
+    @media (max-width: 768px) {
+      .countdown {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
       }
     }
 
     @media (max-width: 480px) {
-      body {
-        padding: 14px;
+      body { padding: 15px; }
+
+      .container {
+        padding: 30px 15px;
       }
 
-      .countdown-card {
-        padding: 28px 16px;
-      }
+      .countdown { gap: 12px; }
 
-      .countdown-grid {
-        gap: 11px;
-      }
+      .box { padding: 18px 5px; }
 
-      .time-card {
-        padding: 17px 6px;
-        border-radius: 14px;
-      }
+      .number { font-size: 32px; }
 
-      .time-value {
-        font-size: 2rem;
-      }
-
-      .time-label {
-        font-size: 0.58rem;
+      .label {
+        font-size: 9px;
         letter-spacing: 1px;
       }
-
-      .progress-heading,
-      .current-time,
-      .target-date {
-        font-size: 11px;
-      }
     }
+
+    /* =========================================
+       ACCESSIBILITY
+    ========================================= */
 
     @media (prefers-reduced-motion: reduce) {
       *,
       *::before,
       *::after {
-        scroll-behavior: auto !important;
-        animation-duration: 0.01ms !important;
+        animation-duration: .01ms !important;
         animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
+        transition-duration: .01ms !important;
       }
     }
+
   </style>
 </head>
 
 <body>
-  <div class="particles" id="particles" aria-hidden="true"></div>
 
-  <main class="countdown-card">
-    <header class="page-header">
-      <div class="status-badge">
-        <span class="status-dot" aria-hidden="true"></span>
-        <span>Good Luck</span>
+  <!-- Background Particles -->
+  <div class="particles" id="particles"></div>
+
+  <!-- Main Container -->
+  <main class="container">
+
+    <div class="badge">
+      <span class="badge-dot"></span>
+      GOOD LUCK
+    </div>
+
+    <h1 class="title">BACII 2027</h1>
+
+    <p class="subtitle">
+      Knowledge is the key to success
+    </p>
+
+    <!-- Countdown -->
+    <div class="countdown" id="countdown-wrapper">
+
+      <div class="box">
+        <span id="days" class="number">00</span>
+        <span class="label">Days</span>
       </div>
 
-      <h1 class="page-title">BACII 2027</h1>
-      <p class="page-subtitle">Knowledge is the key to success</p>
-    </header>
+      <div class="box">
+        <span id="hours" class="number">00</span>
+        <span class="label">Hours</span>
+      </div>
 
-    <section
-      class="countdown-grid"
-      id="countdown"
-      aria-label="Time remaining until August 10, 2027"
-      aria-live="off"
-    >
-      <div class="time-card">
-        <span class="time-value" id="days">00</span>
-        <span class="time-label">Days</span>
+      <div class="box">
+        <span id="minutes" class="number">00</span>
+        <span class="label">Minutes</span>
       </div>
-      <div class="time-card">
-        <span class="time-value" id="hours">00</span>
-        <span class="time-label">Hours</span>
-      </div>
-      <div class="time-card">
-        <span class="time-value" id="minutes">00</span>
-        <span class="time-label">Minutes</span>
-      </div>
-      <div class="time-card">
-        <span class="time-value" id="seconds">00</span>
-        <span class="time-label">Seconds</span>
-      </div>
-    </section>
 
-    <section class="progress-section" aria-label="Countdown progress">
-      <div class="progress-heading">
+      <div class="box">
+        <span id="seconds" class="number">00</span>
+        <span class="label">Seconds</span>
+      </div>
+
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-section">
+
+      <div class="progress-info">
         <span>Progress</span>
         <span id="progress-text">0.00%</span>
       </div>
-      <div
-        class="progress-track"
-        id="progress-track"
-        role="progressbar"
-        aria-label="Progress toward BACII 2027"
-        aria-valuemin="0"
-        aria-valuemax="100"
-        aria-valuenow="0"
-      >
-        <div class="progress-fill" id="progress-fill"></div>
-      </div>
-    </section>
 
-    <footer class="footer-info">
-      <p class="current-time">
+      <div class="progress-track" id="progress-track">
+
+        <div class="chakra-trail"></div>
+
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+
+        <!-- Ninja Runner -->
+        <div class="sasuke-runner" id="sasuke-runner" aria-hidden="true">
+
+          <img
+  src="sasuke-running.png"
+  class="sasuke-runner"
+  alt="Sasuke Running"
+>
+
+            <!-- Chakra Aura -->
+            <path class="chakra-aura"
+              d="M8 30 L17 25 L12 18 L25 23 L31 9 L36 23
+                 L50 16 L44 29 L58 32 L43 37 L51 48 L36 42
+                 L29 56 L24 42 L10 48 L17 36 Z"/>
+
+            <!-- Hair -->
+            <path fill="#111827"
+              d="M17 24 L10 10 L24 17 L29 4 L35 17
+                 L49 8 L44 25 L38 34 L20 34 Z"/>
+
+            <!-- Face -->
+            <path fill="#f1d4c2"
+              d="M20 25 L43 25 L40 43 L31 49 L22 42 Z"/>
+
+            <!-- Eyes -->
+            <path stroke="#111827"
+              stroke-width="2"
+              stroke-linecap="round"
+              d="M23 32 L29 33 M34 33 L40 32"/>
+
+            <!-- Neck -->
+            <path fill="#e8c0ac"
+              d="M27 43 L36 43 L36 51 L27 51 Z"/>
+
+            <!-- Outfit -->
+            <path fill="#172554"
+              d="M18 43 L31 47 L45 42 L53 58 L10 58 Z"/>
+
+            <!-- Running Legs -->
+            <path stroke="#111827"
+              stroke-width="6"
+              stroke-linecap="round"
+              d="M25 54 L15 61 M39 53 L49 59"/>
+
+            <!-- Arms -->
+            <path stroke="#172554"
+              stroke-width="6"
+              stroke-linecap="round"
+              d="M20 47 L11 42 M43 46 L52 39"/>
+
+          </svg>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Information -->
+    <div class="info-container">
+
+      <div class="current-time">
         Cambodia Time (UTC+7):
         <strong id="current-time">Loading...</strong>
-      </p>
+      </div>
 
       <div class="target-date">
-        <span>Target:</span>
+        Target:
         <strong>និន្ទេស C</strong>
       </div>
-    </footer>
+
+    </div>
+
   </main>
 
+  <!-- =========================================
+       JAVASCRIPT
+  ========================================= -->
+
   <script>
-    "use strict";
 
-    /* =========================================================
-       1. COUNTDOWN CONFIGURATION
-       Update these values when changing the countdown period.
-    ========================================================= */
-    const CONFIG = Object.freeze({
-      startDate: "2026-08-18T00:00:00+07:00",
-      targetDate: "2027-08-10T00:00:00+07:00",
-      timeZone: "Asia/Phnom_Penh",
-      particleCount: {
-        mobile: 22,
-        desktop: 40
-      }
-    });
+    /* =========================================
+       SETTINGS
+    ========================================= */
 
-    const START_TIMESTAMP = new Date(CONFIG.startDate).getTime();
-    const TARGET_TIMESTAMP = new Date(CONFIG.targetDate).getTime();
-    const TOTAL_DURATION = TARGET_TIMESTAMP - START_TIMESTAMP;
-    const SECOND_IN_MS = 1000;
-    const MINUTE_IN_MS = 60 * SECOND_IN_MS;
-    const HOUR_IN_MS = 60 * MINUTE_IN_MS;
-    const DAY_IN_MS = 24 * HOUR_IN_MS;
+    const START_DATE =
+      new Date("2026-08-18T00:00:00+07:00").getTime();
 
-    /* =========================================================
-       2. DOM REFERENCES
-    ========================================================= */
-    const elements = {
-      days: document.getElementById("days"),
-      hours: document.getElementById("hours"),
-      minutes: document.getElementById("minutes"),
-      seconds: document.getElementById("seconds"),
-      countdown: document.getElementById("countdown"),
-      progressFill: document.getElementById("progress-fill"),
-      progressText: document.getElementById("progress-text"),
-      progressTrack: document.getElementById("progress-track"),
-      currentTime: document.getElementById("current-time"),
-      particles: document.getElementById("particles")
-    };
+    const TARGET_DATE =
+      new Date("2027-08-10T00:00:00+07:00").getTime();
 
-    let countdownIntervalId = null;
-    let clockIntervalId = null;
-    let isCompleted = false;
 
-    /* =========================================================
-       3. UTILITY FUNCTIONS
-    ========================================================= */
-    function padNumber(value) {
-      return String(value).padStart(2, "0");
+    /* =========================================
+       ELEMENTS
+    ========================================= */
+
+    const daysElement =
+      document.getElementById("days");
+
+    const hoursElement =
+      document.getElementById("hours");
+
+    const minutesElement =
+      document.getElementById("minutes");
+
+    const secondsElement =
+      document.getElementById("seconds");
+
+    const progressFill =
+      document.getElementById("progress-fill");
+
+    const progressText =
+      document.getElementById("progress-text");
+
+    const progressTrack =
+      document.getElementById("progress-track");
+
+    const currentTimeElement =
+      document.getElementById("current-time");
+
+    const countdownWrapper =
+      document.getElementById("countdown-wrapper");
+
+
+    /* =========================================
+       HELPER FUNCTIONS
+    ========================================= */
+
+    function pad(number) {
+      return String(number).padStart(2, "0");
     }
 
-    function setAnimatedNumber(element, value) {
-      const formattedValue = padNumber(value);
 
-      if (element.textContent === formattedValue) {
-        return;
+    function updateNumber(element, value) {
+
+      const formatted = pad(value);
+
+      if (element.textContent !== formatted) {
+
+        element.textContent = formatted;
+
+        element.classList.remove("tick");
+
+        void element.offsetWidth;
+
+        element.classList.add("tick");
       }
-
-      element.textContent = formattedValue;
-      element.classList.remove("tick");
-
-      // Restart the animation only when the displayed value changes.
-      void element.offsetWidth;
-      element.classList.add("tick");
     }
 
-    /* =========================================================
-       4. CAMBODIA CLOCK
-    ========================================================= */
+
+    /* =========================================
+       CAMBODIA CLOCK
+    ========================================= */
+
     function updateCurrentTime() {
+
       const now = new Date();
 
-      const formattedTime = new Intl.DateTimeFormat("en-GB", {
-        timeZone: CONFIG.timeZone,
-        day: "2-digit",
-        month: "long",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: false
-      }).format(now);
+      const cambodiaTime =
+        new Intl.DateTimeFormat("en-US", {
+          timeZone: "Asia/Phnom_Penh",
 
-      elements.currentTime.textContent = formattedTime;
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+
+          hour12: false
+
+        }).format(now);
+
+      currentTimeElement.textContent = cambodiaTime;
     }
 
-    /* =========================================================
-       5. PROGRESS INDICATOR
-    ========================================================= */
+
+    /* =========================================
+       PROGRESS UPDATE
+    ========================================= */
+
     function updateProgress(now) {
-      const elapsed = now - START_TIMESTAMP;
-      const progress = TOTAL_DURATION > 0
-        ? Math.min(100, Math.max(0, (elapsed / TOTAL_DURATION) * 100))
-        : 100;
 
-      const roundedProgress = Number(progress.toFixed(2));
+      const totalDuration =
+        TARGET_DATE - START_DATE;
 
-      elements.progressFill.style.width = `${roundedProgress}%`;
-      elements.progressText.textContent = `${roundedProgress.toFixed(2)}%`;
-      elements.progressTrack.setAttribute("aria-valuenow", String(roundedProgress));
+      const elapsed =
+        now - START_DATE;
+
+      let progress =
+        (elapsed / totalDuration) * 100;
+
+      progress = Math.max(0, Math.min(100, progress));
+
+      const percentage = progress.toFixed(2) + "%";
+
+      progressFill.style.width = percentage;
+
+      progressText.textContent = percentage;
+
+      progressTrack.style.setProperty(
+        "--progress",
+        progress + "%"
+      );
+
+      progressTrack.classList.toggle(
+        "complete",
+        progress >= 100
+      );
     }
 
-    /* =========================================================
-       6. COUNTDOWN ENGINE
-    ========================================================= */
-    function renderCompletionState() {
-      if (isCompleted) {
-        return;
-      }
 
-      isCompleted = true;
-      elements.countdown.innerHTML = `
-        <div class="completion-message">
-          🎉 The Day Has Arrived!
-        </div>
-      `;
-
-      elements.progressFill.style.width = "100%";
-      elements.progressText.textContent = "100.00%";
-      elements.progressTrack.setAttribute("aria-valuenow", "100");
-
-      if (countdownIntervalId !== null) {
-        window.clearInterval(countdownIntervalId);
-        countdownIntervalId = null;
-      }
-    }
+    /* =========================================
+       COUNTDOWN
+    ========================================= */
 
     function updateCountdown() {
+
       const now = Date.now();
-      const remainingTime = TARGET_TIMESTAMP - now;
+
+      const difference = TARGET_DATE - now;
 
       updateProgress(now);
 
-      if (remainingTime <= 0) {
-        renderCompletionState();
+      if (difference <= 0) {
+
+        countdownWrapper.innerHTML = `
+          <div class="finished">
+            🎉 The Day Has Arrived!
+          </div>
+        `;
+
         return;
       }
 
-      const days = Math.floor(remainingTime / DAY_IN_MS);
-      const hours = Math.floor((remainingTime % DAY_IN_MS) / HOUR_IN_MS);
-      const minutes = Math.floor((remainingTime % HOUR_IN_MS) / MINUTE_IN_MS);
-      const seconds = Math.floor((remainingTime % MINUTE_IN_MS) / SECOND_IN_MS);
+      const days = Math.floor(
+        difference / (1000 * 60 * 60 * 24)
+      );
 
-      setAnimatedNumber(elements.days, days);
-      setAnimatedNumber(elements.hours, hours);
-      setAnimatedNumber(elements.minutes, minutes);
-      setAnimatedNumber(elements.seconds, seconds);
+      const hours = Math.floor(
+        (difference % (1000 * 60 * 60 * 24)) /
+        (1000 * 60 * 60)
+      );
+
+      const minutes = Math.floor(
+        (difference % (1000 * 60 * 60)) /
+        (1000 * 60)
+      );
+
+      const seconds = Math.floor(
+        (difference % (1000 * 60)) / 1000
+      );
+
+      updateNumber(daysElement, days);
+      updateNumber(hoursElement, hours);
+      updateNumber(minutesElement, minutes);
+      updateNumber(secondsElement, seconds);
     }
 
-    /* =========================================================
-       7. PARTICLE GENERATOR
-    ========================================================= */
+
+    /* =========================================
+       BACKGROUND PARTICLES
+    ========================================= */
+
     function createParticles() {
-      const prefersReducedMotion = window.matchMedia(
-        "(prefers-reduced-motion: reduce)"
-      ).matches;
 
-      if (prefersReducedMotion) {
-        return;
-      }
+      const container =
+        document.getElementById("particles");
 
-      const isMobile = window.matchMedia("(max-width: 600px)").matches;
-      const particleCount = isMobile
-        ? CONFIG.particleCount.mobile
-        : CONFIG.particleCount.desktop;
+      const amount =
+        window.innerWidth < 600 ? 25 : 45;
 
-      const fragment = document.createDocumentFragment();
+      for (let i = 0; i < amount; i++) {
 
-      for (let index = 0; index < particleCount; index += 1) {
-        const particle = document.createElement("span");
-        const size = 1 + Math.random() * 2.5;
+        const particle =
+          document.createElement("span");
 
         particle.className = "particle";
-        particle.style.left = `${Math.random() * 100}%`;
-        particle.style.width = `${size}px`;
-        particle.style.height = `${size}px`;
-        particle.style.animationDuration = `${9 + Math.random() * 14}s`;
-        particle.style.animationDelay = `${Math.random() * 15}s`;
 
-        fragment.appendChild(particle);
+        particle.style.left =
+          Math.random() * 100 + "%";
+
+        particle.style.animationDuration =
+          (8 + Math.random() * 15) + "s";
+
+        particle.style.animationDelay =
+          Math.random() * 15 + "s";
+
+        const size =
+          1 + Math.random() * 3;
+
+        particle.style.width = size + "px";
+        particle.style.height = size + "px";
+
+        container.appendChild(particle);
       }
-
-      elements.particles.appendChild(fragment);
     }
 
-    /* =========================================================
-       8. INITIALIZATION
-    ========================================================= */
-    function initializeCountdown() {
-      if (
-        !Number.isFinite(START_TIMESTAMP) ||
-        !Number.isFinite(TARGET_TIMESTAMP) ||
-        TOTAL_DURATION <= 0
-      ) {
-        console.error("Invalid countdown configuration. Check startDate and targetDate.");
-        return;
-      }
+
+    /* =========================================
+       INITIALIZATION
+    ========================================= */
+
+    function initialize() {
 
       createParticles();
-      updateCurrentTime();
+
       updateCountdown();
 
-      // Keep the clock and countdown synchronized with real time.
-      clockIntervalId = window.setInterval(updateCurrentTime, SECOND_IN_MS);
+      updateCurrentTime();
 
-      if (!isCompleted) {
-        countdownIntervalId = window.setInterval(updateCountdown, SECOND_IN_MS);
-      }
+      setInterval(updateCountdown, 1000);
+
+      setInterval(updateCurrentTime, 1000);
     }
 
-    initializeCountdown();
 
-    // Avoid unnecessary background updates while the page is hidden.
-    document.addEventListener("visibilitychange", () => {
-      if (document.hidden) {
-        if (countdownIntervalId !== null) {
-          window.clearInterval(countdownIntervalId);
-          countdownIntervalId = null;
-        }
+    initialize();
 
-        if (clockIntervalId !== null) {
-          window.clearInterval(clockIntervalId);
-          clockIntervalId = null;
-        }
-
-        return;
-      }
-
-      updateCurrentTime();
-      updateCountdown();
-
-      if (clockIntervalId === null) {
-        clockIntervalId = window.setInterval(updateCurrentTime, SECOND_IN_MS);
-      }
-
-      if (!isCompleted && countdownIntervalId === null) {
-        countdownIntervalId = window.setInterval(updateCountdown, SECOND_IN_MS);
-      }
-    });
   </script>
+
 </body>
 </html>
