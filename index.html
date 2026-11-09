@@ -636,6 +636,133 @@
       }
     }
 
+/* BOTTOM LEFT MUSIC BANNER */
+.music-banner {
+    position: fixed;
+    bottom: 22px;
+    left: 22px;
+    z-index: 9999;
+
+    display: flex;
+    align-items: center;
+    gap: 13px;
+
+    padding: 12px 18px;
+    min-width: 230px;
+
+    background: rgba(15, 25, 45, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+
+    border: 1px solid rgba(0, 190, 255, 0.25);
+    border-radius: 16px;
+
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.music-play-btn {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+
+    border: none;
+    border-radius: 50%;
+
+    color: white;
+    background: linear-gradient(135deg, #087bdb, #00c8ee);
+
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.music-play-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 18px rgba(0, 190, 255, 0.5);
+}
+
+.music-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.music-status {
+    color: #00c8ee;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+}
+
+.music-name {
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.music-note {
+    margin-left: auto;
+    color: #00c8ee;
+    font-size: 22px;
+    animation: musicPulse 1.5s infinite ease-in-out;
+}
+
+@keyframes musicPulse {
+    50% {
+        opacity: 0.4;
+        transform: scale(1.15);
+    }
+}
+
+@media (max-width: 480px) {
+    .music-banner {
+        bottom: 14px;
+        left: 14px;
+        min-width: 0;
+        padding: 10px 13px;
+    }
+
+    .music-name {
+        font-size: 11px;
+    }
+}
+
+/* VOLUME CONTROL */
+.volume-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 5px;
+}
+
+#volume-icon {
+    font-size: 15px;
+}
+
+#volume-wheel {
+    width: 75px;
+    height: 4px;
+    accent-color: #00c8ee;
+    cursor: pointer;
+}
+
+#volume-value {
+    color: rgba(255,255,255,0.75);
+    font-size: 10px;
+    min-width: 28px;
+}
+
+@media (max-width: 480px) {
+    .music-banner {
+        gap: 9px;
+        max-width: calc(100vw - 28px);
+    }
+
+    #volume-wheel {
+        width: 55px;
+    }
+}
+    
   </style>
 </head>
 
@@ -772,7 +899,34 @@
     </div>
 
   </main>
+<!-- BOTTOM LEFT MUSIC BANNER -->
+<!-- MUSIC BANNER -->
+<div class="music-banner">
+    <audio id="bg-music" preload="none">
+        <source src="https://files.catbox.moe/sy11mk.mp3" type="audio/mpeg">
+    </audio>
 
+    <button id="music-button" class="music-play-btn">▶</button>
+
+    <div class="music-info">
+        <span class="music-status">NOW PLAYING</span>
+        <span class="music-name">បទបាក់ឌុប</span>
+    </div>
+
+    <div class="volume-control">
+        <span id="volume-icon">🔊</span>
+        <input
+            type="range"
+            id="volume-wheel"
+            min="0"
+            max="100"
+            value="70"
+            step="1"
+            title="Volume"
+        >
+        <span id="volume-value">70%</span>
+    </div>
+</div>
   <!-- =========================================
        JAVASCRIPT
   ========================================= -->
@@ -996,6 +1150,8 @@
         container.appendChild(particle);
       }
     }
+
+
     /* =========================================
        INITIALIZATION
     ========================================= */
@@ -1016,6 +1172,48 @@
 
     initialize();
 
+/* MUSIC PLAYER */
+const music = document.getElementById("bg-music");
+const musicButton = document.getElementById("music-button");
+const volumeWheel = document.getElementById("volume-wheel");
+const volumeValue = document.getElementById("volume-value");
+const volumeIcon = document.getElementById("volume-icon");
+
+music.volume = 0.7;
+
+musicButton.addEventListener("click", async () => {
+    if (music.paused) {
+        try {
+            await music.play();
+            musicButton.textContent = "Ⅱ";
+        } catch (error) {
+            console.error("Music playback failed:", error);
+        }
+    } else {
+        music.pause();
+        musicButton.textContent = "▶";
+    }
+});
+
+volumeWheel.addEventListener("input", () => {
+    const volume = Number(volumeWheel.value);
+
+    music.volume = volume / 100;
+    volumeValue.textContent = volume + "%";
+
+    if (volume === 0) {
+        volumeIcon.textContent = "🔇";
+    } else if (volume <= 50) {
+        volumeIcon.textContent = "🔉";
+    } else {
+        volumeIcon.textContent = "🔊";
+    }
+});
+
+music.addEventListener("ended", () => {
+    musicButton.textContent = "▶";
+});
+    
   </script>
 
 </body>
