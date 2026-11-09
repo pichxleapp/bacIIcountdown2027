@@ -15,9 +15,9 @@
        ROOT & RESET
     ========================================= */
     :root {
-      --bg-1: #070b16;
-      --bg-2: #101a33;
-      --bg-3: #16264a;
+      --bg-1: #060913;
+      --bg-2: #0f1830;
+      --bg-3: #152345;
 
       --accent: #4facfe;
       --accent-2: #00f2fe;
@@ -31,6 +31,7 @@
       --beat-x: 0px;
       --beat-y: 0px;
       --beat-glow: 0;
+      --club-hue: 0deg;
     }
 
     * {
@@ -54,13 +55,13 @@
       font-family: 'Poppins', 'Kantumruy Pro', sans-serif;
       color: var(--white);
       background:
-        radial-gradient(circle at 15% 20%, rgba(79, 172, 254, 0.20), transparent 30%),
-        radial-gradient(circle at 85% 80%, rgba(0, 242, 254, 0.13), transparent 30%),
+        radial-gradient(circle at 15% 20%, rgba(79, 172, 254, 0.18), transparent 30%),
+        radial-gradient(circle at 85% 80%, rgba(0, 242, 254, 0.12), transparent 30%),
         linear-gradient(135deg, var(--bg-1), var(--bg-2), var(--bg-3));
     }
 
     /* =========================================
-       ANIMATED BACKGROUND
+       ANIMATED BACKGROUND & PARTICLES
     ========================================= */
     body::before {
       content: "";
@@ -76,7 +77,7 @@
       );
       animation: rotateBG 25s linear infinite;
       pointer-events: none;
-      z-index: -2;
+      z-index: -3;
     }
 
     @keyframes rotateBG {
@@ -112,7 +113,140 @@
     }
 
     /* =========================================
-       MAIN CONTAINER
+       🪩 VIP NIGHTCLUB LIGHTING & LASER SYSTEM
+    ========================================= */
+    .club-lights {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -2;
+      overflow: hidden;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      mix-blend-mode: screen;
+    }
+
+    body.audio-reactive.club-mode-on .club-lights {
+      opacity: 1;
+    }
+
+    /* Ceiling Sweeping Spotlight Cones */
+    .spotlight {
+      position: absolute;
+      top: -18vh;
+      width: 48vw;
+      height: 135vh;
+      transform-origin: 50% 0%;
+      clip-path: polygon(47% 0%, 53% 0%, 100% 100%, 0% 100%);
+      filter: blur(28px);
+      opacity: calc(0.18 + var(--beat-glow) * 0.65);
+      transition: opacity 0.06s linear;
+    }
+
+    .spotlight-1 {
+      left: -8vw;
+      background: linear-gradient(180deg, rgba(0, 242, 254, 0.95), rgba(0, 120, 255, 0.25) 60%, transparent 95%);
+      animation: sweepBeam1 4.2s ease-in-out infinite alternate;
+    }
+
+    .spotlight-2 {
+      left: 18vw;
+      background: linear-gradient(180deg, rgba(255, 0, 128, 0.95), rgba(180, 0, 255, 0.25) 60%, transparent 95%);
+      animation: sweepBeam2 3.6s ease-in-out infinite alternate;
+    }
+
+    .spotlight-3 {
+      right: 18vw;
+      background: linear-gradient(180deg, rgba(162, 0, 255, 0.95), rgba(0, 225, 255, 0.25) 60%, transparent 95%);
+      animation: sweepBeam3 4.8s ease-in-out infinite alternate;
+    }
+
+    .spotlight-4 {
+      right: -8vw;
+      background: linear-gradient(180deg, rgba(0, 255, 157, 0.95), rgba(0, 195, 255, 0.25) 60%, transparent 95%);
+      animation: sweepBeam4 3.9s ease-in-out infinite alternate;
+    }
+
+    @keyframes sweepBeam1 {
+      from { transform: rotate(-36deg); }
+      to { transform: rotate(22deg); }
+    }
+    @keyframes sweepBeam2 {
+      from { transform: rotate(26deg); }
+      to { transform: rotate(-24deg); }
+    }
+    @keyframes sweepBeam3 {
+      from { transform: rotate(-22deg); }
+      to { transform: rotate(28deg); }
+    }
+    @keyframes sweepBeam4 {
+      from { transform: rotate(34deg); }
+      to { transform: rotate(-20deg); }
+    }
+
+    /* Sharp Club Laser Beams */
+    .laser-container {
+      position: absolute;
+      inset: 0;
+      opacity: calc(var(--beat-glow) * 0.95);
+    }
+
+    .laser-line {
+      position: absolute;
+      top: -5vh;
+      width: 2px;
+      height: 125vh;
+      transform-origin: top center;
+      filter: drop-shadow(0 0 8px currentColor);
+    }
+
+    .laser-1 {
+      left: 15%;
+      color: #00f2fe;
+      background: linear-gradient(180deg, #ffffff, #00f2fe, transparent);
+      animation: laserScan1 1.8s ease-in-out infinite alternate;
+    }
+
+    .laser-2 {
+      left: 50%;
+      color: #ff007f;
+      background: linear-gradient(180deg, #ffffff, #ff007f, transparent);
+      animation: laserScan2 1.4s ease-in-out infinite alternate;
+    }
+
+    .laser-3 {
+      left: 85%;
+      color: #00ff88;
+      background: linear-gradient(180deg, #ffffff, #00ff88, transparent);
+      animation: laserScan3 1.6s ease-in-out infinite alternate;
+    }
+
+    @keyframes laserScan1 {
+      from { transform: rotate(-42deg); }
+      to { transform: rotate(35deg); }
+    }
+    @keyframes laserScan2 {
+      from { transform: rotate(38deg); }
+      to { transform: rotate(-38deg); }
+    }
+    @keyframes laserScan3 {
+      from { transform: rotate(40deg); }
+      to { transform: rotate(-32deg); }
+    }
+
+    /* Bass Strobe Edge Vignette & Floor Glow */
+    .club-strobe {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(255, 255, 255, calc(var(--beat-glow) * 0.22)), transparent 55%),
+        radial-gradient(ellipse at 50% 100%, rgba(255, 0, 128, calc(var(--beat-glow) * 0.28)), transparent 65%);
+      box-shadow: inset 0 0 calc(var(--beat-glow) * 90px) rgba(0, 242, 254, 0.35);
+      filter: hue-rotate(var(--club-hue));
+    }
+
+    /* =========================================
+       MAIN CONTAINER (WITH RGB CLUB BORDER)
     ========================================= */
     .container {
       position: relative;
@@ -121,8 +255,8 @@
       text-align: center;
       background: linear-gradient(
         135deg,
-        rgba(255, 255, 255, 0.085),
-        rgba(255, 255, 255, 0.035)
+        rgba(14, 22, 42, 0.72),
+        rgba(8, 14, 28, 0.58)
       );
       border: 1px solid var(--glass-border);
       border-radius: 28px;
@@ -132,6 +266,15 @@
         0 35px 100px rgba(0, 0, 0, 0.45),
         inset 0 1px 1px rgba(255, 255, 255, 0.08);
       animation: containerIn 1s ease-out;
+    }
+
+    /* Animated RGB Neon Ring Around Container in Club Mode */
+    body.audio-reactive.club-mode-on .container {
+      border-color: rgba(255, 255, 255, 0.22);
+      box-shadow:
+        0 35px 100px rgba(0, 0, 0, 0.65),
+        0 0 calc(var(--beat-glow) * 55px) hsla(var(--club-hue), 100%, 60%, 0.55),
+        inset 0 0 calc(var(--beat-glow) * 25px) hsla(var(--club-hue), 100%, 60%, 0.25);
     }
 
     @keyframes containerIn {
@@ -586,21 +729,29 @@
     }
 
     /* =========================================
-       VIP DYNAMIC ISLAND MUSIC BANNER
+       VIP DYNAMIC ISLAND & PLAYLIST DRAWER
     ========================================= */
-    .music-banner {
+    .music-wrapper {
       position: fixed;
       bottom: 22px;
       left: 22px;
       z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .music-banner {
+      position: relative;
       display: inline-flex;
       align-items: center;
-      padding: 10px 14px;
+      padding: 9px 13px;
       overflow: hidden;
       background: linear-gradient(
         135deg,
-        rgba(14, 24, 46, 0.90),
-        rgba(8, 14, 28, 0.94)
+        rgba(14, 24, 46, 0.92),
+        rgba(8, 14, 28, 0.96)
       );
       backdrop-filter: blur(22px);
       -webkit-backdrop-filter: blur(22px);
@@ -610,7 +761,6 @@
         0 14px 36px rgba(0, 0, 0, 0.45),
         inset 0 1px 1px rgba(255, 255, 255, 0.12);
       transition:
-        padding 0.45s cubic-bezier(0.22, 1, 0.36, 1),
         border-color 0.35s ease,
         box-shadow 0.35s ease;
       transform: none !important;
@@ -625,7 +775,7 @@
         inset 0 1px 1px rgba(255, 255, 255, 0.18);
     }
 
-    /* Play Button with VIP Spinning Aura */
+    /* Play Button */
     .music-play-btn {
       position: relative;
       width: 38px;
@@ -653,7 +803,7 @@
         transparent,
         #00f2fe,
         transparent,
-        #4facfe,
+        #ff007f,
         transparent
       );
       opacity: 0;
@@ -662,8 +812,8 @@
     }
 
     .music-banner.is-playing .music-play-btn::before {
-      opacity: 0.85;
-      animation: rotateBG 3s linear infinite;
+      opacity: 0.9;
+      animation: rotateBG 2.5s linear infinite;
     }
 
     .music-play-btn:hover {
@@ -678,14 +828,44 @@
       display: block;
     }
 
+    /* Prev & Next Track Mini Buttons */
+    .nav-track-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #bfefff;
+      width: 27px;
+      height: 27px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      margin-left: 5px;
+      flex-shrink: 0;
+      transition: all 0.2s ease;
+    }
+
+    .nav-track-btn:hover {
+      background: rgba(0, 242, 254, 0.18);
+      color: #ffffff;
+      transform: scale(1.08);
+    }
+
+    .nav-track-btn svg {
+      width: 13px;
+      height: 13px;
+      fill: currentColor;
+    }
+
     /* Track Info */
     .music-info {
       display: flex;
       flex-direction: column;
       gap: 2px;
-      margin-left: 11px;
+      margin-left: 9px;
       padding-right: 4px;
       white-space: nowrap;
+      cursor: pointer;
     }
 
     .music-status-row {
@@ -701,7 +881,6 @@
       letter-spacing: 1.4px;
     }
 
-    /* Mini Audio Equalizer Bars */
     .eq-bars {
       display: inline-flex;
       align-items: flex-end;
@@ -728,6 +907,51 @@
       font-size: 12.5px;
       font-weight: 600;
       letter-spacing: 0.2px;
+      max-width: 130px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Playlist & Club Light Toggle Buttons */
+    .playlist-toggle-btn,
+    .club-toggle-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #00f2fe;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      margin-left: 6px;
+      flex-shrink: 0;
+      font-size: 13px;
+      transition: all 0.25s ease;
+    }
+
+    .playlist-toggle-btn:hover,
+    .playlist-toggle-btn.active {
+      background: rgba(0, 242, 254, 0.2);
+      border-color: rgba(0, 242, 254, 0.5);
+      transform: scale(1.08);
+    }
+
+    .club-toggle-btn.active {
+      background: linear-gradient(135deg, rgba(255, 0, 128, 0.28), rgba(0, 242, 254, 0.28));
+      border-color: rgba(255, 0, 200, 0.6);
+      box-shadow: 0 0 12px rgba(255, 0, 160, 0.45);
+    }
+
+    .club-toggle-btn:hover {
+      transform: scale(1.1) rotate(12deg);
+    }
+
+    .playlist-toggle-btn svg {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
     }
 
     /* Auto-Collapsing VIP Volume Drawer */
@@ -736,8 +960,6 @@
       align-items: center;
       gap: 8px;
       white-space: nowrap;
-
-      /* Collapsed State: Takes 0px width, no empty space */
       max-width: 0;
       opacity: 0;
       margin-left: 0;
@@ -746,7 +968,6 @@
       overflow: hidden;
       pointer-events: none;
       transform: translateX(-8px) scale(0.95);
-
       transition:
         max-width 0.48s cubic-bezier(0.22, 1, 0.36, 1),
         opacity 0.28s ease,
@@ -756,13 +977,12 @@
         border-color 0.35s ease;
     }
 
-    /* Expanded State on Hover or Active Interaction */
     .music-banner:hover .volume-control,
     .music-banner.volume-visible .volume-control {
-      max-width: 165px;
+      max-width: 155px;
       opacity: 1;
-      margin-left: 10px;
-      padding-left: 12px;
+      margin-left: 8px;
+      padding-left: 10px;
       border-left: 1px solid rgba(255, 255, 255, 0.14);
       pointer-events: auto;
       transform: translateX(0) scale(1);
@@ -786,18 +1006,17 @@
     }
 
     .volume-mute-btn svg {
-      width: 16px;
-      height: 16px;
+      width: 15px;
+      height: 15px;
       fill: currentColor;
     }
 
-    /* VIP Custom Glowing Range Slider */
     #volume-wheel {
       --vol-pct: 70%;
       -webkit-appearance: none;
       appearance: none;
-      width: 76px;
-      height: 5px;
+      width: 65px;
+      height: 4px;
       border-radius: 999px;
       background: linear-gradient(
         90deg,
@@ -808,65 +1027,179 @@
       );
       outline: none;
       cursor: pointer;
-      transition: box-shadow 0.25s ease;
-    }
-
-    #volume-wheel:hover {
-      box-shadow: 0 0 10px rgba(0, 242, 254, 0.4);
     }
 
     #volume-wheel::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 13px;
-      height: 13px;
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
       background: #ffffff;
       border: 2px solid #00e1ff;
-      box-shadow: 0 0 10px #00f2fe;
+      box-shadow: 0 0 8px #00f2fe;
       cursor: pointer;
-      transition: transform 0.2s ease, background-color 0.2s ease;
-    }
-
-    #volume-wheel::-webkit-slider-thumb:hover {
-      transform: scale(1.22);
-      background: #e0fbff;
     }
 
     #volume-wheel::-moz-range-thumb {
-      width: 13px;
-      height: 13px;
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
       background: #ffffff;
       border: 2px solid #00e1ff;
-      box-shadow: 0 0 10px #00f2fe;
+      box-shadow: 0 0 8px #00f2fe;
       cursor: pointer;
-      transition: transform 0.2s ease;
     }
 
     #volume-value {
       color: rgba(255, 255, 255, 0.85);
-      font-size: 10.5px;
+      font-size: 10px;
       font-weight: 600;
-      min-width: 28px;
+      min-width: 26px;
       text-align: right;
       font-variant-numeric: tabular-nums;
     }
 
-    /* Song Progress Line inside Banner */
     .music-progress-bar {
       position: absolute;
       bottom: 0;
       left: 0;
       height: 2px;
       width: 0%;
-      background: linear-gradient(90deg, #087bdb, #00f2fe);
+      background: linear-gradient(90deg, #087bdb, #00f2fe, #ff007f);
       box-shadow: 0 0 8px #00f2fe;
       transition: width 0.2s linear;
     }
 
     /* =========================================
-       REAL AUDIO REACTIVE EFFECT
+       PLAYLIST DRAWER PANEL
+    ========================================= */
+    .playlist-drawer {
+      width: 310px;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      pointer-events: none;
+      transform: translateY(8px);
+      background: linear-gradient(
+        145deg,
+        rgba(12, 22, 42, 0.95),
+        rgba(7, 12, 24, 0.98)
+      );
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      border: 1px solid rgba(0, 210, 255, 0.22);
+      border-radius: 18px;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.55);
+      transition:
+        max-height 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 0.25s ease,
+        transform 0.3s ease,
+        padding 0.3s ease;
+      padding: 0 14px;
+    }
+
+    .playlist-drawer.open {
+      max-height: 270px;
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+      padding: 13px 14px;
+    }
+
+    .playlist-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 700;
+      color: #00f2fe;
+      letter-spacing: 0.8px;
+      margin-bottom: 9px;
+      padding-bottom: 7px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .playlist-header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .add-local-btn {
+      background: rgba(0, 242, 254, 0.12);
+      border: 1px solid rgba(0, 242, 254, 0.3);
+      color: #00f2fe;
+      font-family: inherit;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .add-local-btn:hover {
+      background: rgba(0, 242, 254, 0.25);
+      color: #ffffff;
+    }
+
+    .playlist-tracks {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      max-height: 175px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0, 242, 254, 0.3) transparent;
+    }
+
+    .playlist-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .playlist-item:hover {
+      background: rgba(0, 242, 254, 0.1);
+    }
+
+    .playlist-item.active {
+      background: linear-gradient(135deg, rgba(7, 104, 201, 0.32), rgba(0, 210, 255, 0.18));
+      border-color: rgba(0, 242, 254, 0.35);
+    }
+
+    .playlist-item-name {
+      font-size: 12px;
+      font-weight: 500;
+      color: #ffffff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 195px;
+    }
+
+    .playlist-item.active .playlist-item-name {
+      color: #00f2fe;
+      font-weight: 600;
+    }
+
+    .playlist-item-playing-icon {
+      font-size: 9.5px;
+      font-weight: 700;
+      color: #00f2fe;
+      letter-spacing: 0.5px;
+      animation: pulse 1.2s infinite;
+    }
+
+    /* =========================================
+       REAL AUDIO REACTIVE EFFECT + CLUB GLOW
     ========================================= */
     body.audio-reactive .container {
       transform: translate3d(
@@ -879,26 +1212,23 @@
     }
 
     body.audio-reactive .box {
-      box-shadow:
-        0 0 calc(var(--beat-glow) * 28px)
-        rgba(0, 200, 255, 0.65);
+      border-color: hsla(var(--club-hue), 95%, 65%, calc(0.15 + var(--beat-glow) * 0.5));
+      box-shadow: 0 0 calc(var(--beat-glow) * 32px) hsla(var(--club-hue), 100%, 60%, 0.65);
     }
 
     body.audio-reactive .title {
-      filter: drop-shadow(
-        0 0 calc(var(--beat-glow) * 18px)
-        rgba(0, 200, 255, 0.8)
-      );
+      filter: drop-shadow(0 0 calc(var(--beat-glow) * 20px) hsla(var(--club-hue), 100%, 65%, 0.85));
     }
 
     /* =========================================
-       RESPONSIVE DESIGN & ACCESSIBILITY
+       RESPONSIVE DESIGN
     ========================================= */
     @media (max-width: 768px) {
       .countdown {
         grid-template-columns: repeat(2, 1fr);
         gap: 15px;
       }
+      .spotlight { width: 70vw; }
     }
 
     @media (max-width: 480px) {
@@ -907,24 +1237,18 @@
       .countdown { gap: 12px; }
       .box { padding: 18px 5px; }
       .number { font-size: 32px; }
-      .label {
-        font-size: 9px;
-        letter-spacing: 1px;
-      }
-      .music-banner {
-        bottom: 14px;
-        left: 14px;
-        padding: 8px 12px;
-        max-width: calc(100vw - 28px);
-      }
-      .music-name { font-size: 11.5px; }
+      .label { font-size: 9px; letter-spacing: 1px; }
+      .music-wrapper { bottom: 14px; left: 14px; max-width: calc(100vw - 28px); }
+      .music-banner { padding: 8px 10px; }
+      .playlist-drawer { width: calc(100vw - 28px); }
+      .music-name { max-width: 85px; font-size: 11px; }
       .music-banner:hover .volume-control,
       .music-banner.volume-visible .volume-control {
-        max-width: 140px;
-        margin-left: 8px;
-        padding-left: 10px;
+        max-width: 110px;
+        margin-left: 5px;
+        padding-left: 7px;
       }
-      #volume-wheel { width: 58px; }
+      #volume-wheel { width: 42px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -937,7 +1261,23 @@
   </style>
 </head>
 
-<body>
+<body class="club-mode-on">
+
+  <!-- 🪩 VIP NIGHTCLUB SPOTLIGHTS & LASERS -->
+  <div class="club-lights" id="club-lights" aria-hidden="true">
+    <div class="spotlight spotlight-1"></div>
+    <div class="spotlight spotlight-2"></div>
+    <div class="spotlight spotlight-3"></div>
+    <div class="spotlight spotlight-4"></div>
+
+    <div class="laser-container">
+      <div class="laser-line laser-1"></div>
+      <div class="laser-line laser-2"></div>
+      <div class="laser-line laser-3"></div>
+    </div>
+
+    <div class="club-strobe"></div>
+  </div>
 
   <!-- Background Particles -->
   <div class="particles" id="particles"></div>
@@ -982,7 +1322,7 @@
     <!-- Progress -->
     <div class="progress-section">
       <div class="progress-info">
-        <span>Journey Progress</span>
+        <span>Bacll Progress</span>
         <span id="progress-text">0.00%</span>
       </div>
 
@@ -1041,59 +1381,95 @@
 
   </main>
 
-  <!-- VIP DYNAMIC ISLAND MUSIC BANNER -->
-  <div class="music-banner" id="music-banner">
-    <audio id="bg-music" preload="none" loop crossorigin="anonymous">
-      <source src="https://files.catbox.moe/sy11mk.mp3" type="audio/mpeg">
-    </audio>
-
-    <button id="music-button" class="music-play-btn" title="Play / Pause" aria-label="Play or Pause Music">
-      <svg id="play-pause-icon" viewBox="0 0 24 24">
-        <path d="M8 5.14v14l11-7-11-7z"/>
-      </svg>
-    </button>
-
-    <div class="music-info" id="music-info-trigger">
-      <div class="music-status-row">
-        <span class="music-status" id="music-status">READY</span>
-        <div class="eq-bars" id="eq-bars">
-          <span class="eq-bar"></span>
-          <span class="eq-bar"></span>
-          <span class="eq-bar"></span>
-          <span class="eq-bar"></span>
+  <!-- VIP PLAYLIST MUSIC WRAPPER -->
+  <div class="music-wrapper" id="music-wrapper">
+    <!-- Playlist Drawer Panel -->
+    <div class="playlist-drawer" id="playlist-drawer">
+      <div class="playlist-header">
+        <span>🎵 MUSIC PLAYLIST</span>
+        <div class="playlist-header-right">
+          <span id="playlist-count">3 បទ</span>
+          <button type="button" id="add-local-btn" class="add-local-btn" title="បន្ថែមបទចម្រៀងពីឧបករណ៍របស់អ្នក">+ ដាក់បទថ្មី</button>
+          <input type="file" id="local-audio-input" accept="audio/*" multiple hidden>
         </div>
       </div>
-      <span class="music-name">បទបាក់ឌុប</span>
+      <div class="playlist-tracks" id="playlist-tracks"></div>
     </div>
 
-    <div class="volume-control">
-      <button id="volume-icon" class="volume-mute-btn" title="Mute / Unmute" aria-label="Mute or Unmute">
-        <svg id="volume-svg" viewBox="0 0 24 24">
-          <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+    <!-- Music Banner -->
+    <div class="music-banner" id="music-banner">
+      <audio id="bg-music" preload="auto" crossorigin="anonymous"></audio>
+
+      <button id="prev-track-btn" class="nav-track-btn" title="បទមុន (Previous Track)" aria-label="Previous Track">
+        <svg viewBox="0 0 24 24">
+          <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
         </svg>
       </button>
 
-      <input
-        type="range"
-        id="volume-wheel"
-        min="0"
-        max="100"
-        value="70"
-        step="1"
-        title="Volume"
-      >
-      <span id="volume-value">70%</span>
-    </div>
+      <button id="music-button" class="music-play-btn" title="Play / Pause" aria-label="Play or Pause Music" style="margin-left: 5px;">
+        <svg id="play-pause-icon" viewBox="0 0 24 24">
+          <path d="M8 5.14v14l11-7-11-7z"/>
+        </svg>
+      </button>
 
-    <div class="music-progress-bar" id="music-progress-bar"></div>
+      <button id="next-track-btn" class="nav-track-btn" title="បទបន្ទាប់ (Next Track)" aria-label="Next Track">
+        <svg viewBox="0 0 24 24">
+          <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
+        </svg>
+      </button>
+
+      <div class="music-info" id="music-info-trigger" title="ចុចដើម្បីបង្ហាញ Volume">
+        <div class="music-status-row">
+          <span class="music-status" id="music-status">READY</span>
+          <div class="eq-bars" id="eq-bars">
+            <span class="eq-bar"></span>
+            <span class="eq-bar"></span>
+            <span class="eq-bar"></span>
+            <span class="eq-bar"></span>
+          </div>
+        </div>
+        <span class="music-name" id="music-name">បទបាក់ឌុប</span>
+      </div>
+
+      <button id="club-toggle" class="club-toggle-btn active" title="បិទ/បើកភ្លើងក្លឹប (Club Lights ON/OFF)" aria-label="Toggle Club Lights">
+        🪩
+      </button>
+
+      <button id="playlist-toggle" class="playlist-toggle-btn" title="បើកបញ្ជីបទចម្រៀង" aria-label="Toggle Playlist">
+        <svg viewBox="0 0 24 24">
+          <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-3z"/>
+        </svg>
+      </button>
+
+      <div class="volume-control">
+        <button id="volume-icon" class="volume-mute-btn" title="Mute / Unmute" aria-label="Mute or Unmute">
+          <svg id="volume-svg" viewBox="0 0 24 24">
+            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+          </svg>
+        </button>
+
+        <input
+          type="range"
+          id="volume-wheel"
+          min="0"
+          max="100"
+          value="70"
+          step="1"
+          title="Volume"
+        >
+        <span id="volume-value">70%</span>
+      </div>
+
+      <div class="music-progress-bar" id="music-progress-bar"></div>
+    </div>
   </div>
 
   <!-- =========================================
-       JAVASCRIPT
+       JAVASCRIPT (CLUB LIGHTS + ROBUST AUDIO)
   ========================================= -->
   <script>
     /* =========================================
-       SETTINGS & ELEMENTS
+       1. CONSTANTS & DOM ELEMENTS
     ========================================= */
     const START_DATE = new Date("2026-08-18T00:00:00+07:00").getTime();
     const TARGET_DATE = new Date("2027-08-10T00:00:00+07:00").getTime();
@@ -1111,8 +1487,75 @@
     const countdownWrapper = document.getElementById("countdown-wrapper");
     const quoteSubtitle = document.getElementById("quote-subtitle");
 
+    let music = document.getElementById("bg-music");
+    const musicBanner = document.getElementById("music-banner");
+    const musicButton = document.getElementById("music-button");
+    const prevTrackBtn = document.getElementById("prev-track-btn");
+    const nextTrackBtn = document.getElementById("next-track-btn");
+    const playPauseIcon = document.getElementById("play-pause-icon");
+    const musicInfoTrigger = document.getElementById("music-info-trigger");
+    const musicStatus = document.getElementById("music-status");
+    const musicName = document.getElementById("music-name");
+    const musicProgressBar = document.getElementById("music-progress-bar");
+    const eqBarsContainer = document.getElementById("eq-bars");
+    const eqBars = document.querySelectorAll(".eq-bar");
+
+    const clubToggleBtn = document.getElementById("club-toggle");
+    const playlistToggle = document.getElementById("playlist-toggle");
+    const playlistDrawer = document.getElementById("playlist-drawer");
+    const playlistTracks = document.getElementById("playlist-tracks");
+    const playlistCount = document.getElementById("playlist-count");
+    const addLocalBtn = document.getElementById("add-local-btn");
+    const localAudioInput = document.getElementById("local-audio-input");
+
+    const volumeWheel = document.getElementById("volume-wheel");
+    const volumeValue = document.getElementById("volume-value");
+    const volumeIcon = document.getElementById("volume-icon");
+    const volumeSvg = document.getElementById("volume-svg");
+
+    const ICON_PLAY = '<path d="M8 5.14v14l11-7-11-7z"/>';
+    const ICON_PAUSE = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+    const ICON_VOL_HIGH = '<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>';
+    const ICON_VOL_LOW = '<path d="M7 9v6h4l5 5V4l-5 5H7zm11.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/>';
+    const ICON_VOL_MUTE = '<path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>';
+
     /* =========================================
-       MOTIVATIONAL QUOTES ROTATOR
+       2. CORS-SAFE PLAYLIST DATA
+    ========================================= */
+    const PLAYLIST = [
+      {
+        title: "បទបាក់ឌុប",
+        src: "https://files.catbox.moe/sy11mk.mp3"
+      },
+      {
+        title: "ceo entrepreneur",
+        src: "https://files.catbox.moe/0uu48i.mp3"
+      }
+    ];
+
+    let currentTrackIndex = Number(localStorage.getItem("bacii_track_idx") ?? 0);
+    if (currentTrackIndex < 0 || currentTrackIndex >= PLAYLIST.length) {
+      currentTrackIndex = 0;
+    }
+
+    let audioContext = null;
+    let analyser = null;
+    let source = null;
+    let frequencyData = null;
+    let useSimulatedBeat = false;
+    let playRequestId = 0;
+
+    let animationId = null;
+    let beatPulse = 0;
+    let averageBass = 0;
+    let lastBeatTime = 0;
+    let clubHue = 190;
+    let volumeTimeout = null;
+    let isPointerInside = false;
+    let lastSavedVolume = Number(localStorage.getItem("bacii_volume") ?? 70);
+
+    /* =========================================
+       3. MOTIVATIONAL QUOTES ROTATOR
     ========================================= */
     const QUOTES = [
       "Knowledge is the key to success",
@@ -1136,7 +1579,7 @@
     setInterval(cycleQuote, 8000);
 
     /* =========================================
-       HELPER FUNCTIONS
+       4. COUNTDOWN & CLOCK FUNCTIONS
     ========================================= */
     function pad(number) {
       return String(number).padStart(2, "0");
@@ -1153,9 +1596,6 @@
       }
     }
 
-    /* =========================================
-       CAMBODIA CLOCK
-    ========================================= */
     function updateCurrentTime() {
       const now = new Date();
       const cambodiaTime = new Intl.DateTimeFormat("en-US", {
@@ -1172,9 +1612,6 @@
       currentTimeElement.textContent = cambodiaTime;
     }
 
-    /* =========================================
-       PROGRESS & COUNTDOWN
-    ========================================= */
     function updateProgress(now) {
       const totalDuration = TARGET_DATE - START_DATE;
       const elapsed = now - START_DATE;
@@ -1218,9 +1655,6 @@
       updateNumber(secondsElement, seconds);
     }
 
-    /* =========================================
-       BACKGROUND PARTICLES
-    ========================================= */
     function createParticles() {
       const container = document.getElementById("particles");
       const amount = window.innerWidth < 600 ? 25 : 45;
@@ -1240,53 +1674,53 @@
       }
     }
 
-    function initialize() {
-      createParticles();
-      updateCountdown();
-      updateCurrentTime();
-      setInterval(updateCountdown, 1000);
-      setInterval(updateCurrentTime, 1000);
+    /* =========================================
+       5. BULLETPROOF PLAYLIST & AUDIO ENGINE
+    ========================================= */
+    function bindAudioEvents(audioEl) {
+      audioEl.addEventListener("ended", () => {
+        playNextTrack();
+      });
+
+      audioEl.addEventListener("timeupdate", () => {
+        if (audioEl.duration && Number.isFinite(audioEl.duration)) {
+          const pct = (audioEl.currentTime / audioEl.duration) * 100;
+          musicProgressBar.style.width = pct.toFixed(1) + "%";
+        }
+      });
+
+      audioEl.addEventListener("waiting", () => {
+        if (!audioEl.paused) {
+          musicStatus.textContent = "LOADING...";
+        }
+      });
+
+      audioEl.addEventListener("playing", () => {
+        setPlayingUI(true);
+      });
+
+      audioEl.addEventListener("pause", () => {
+        if (!audioEl.ended) {
+          setPlayingUI(false);
+        }
+      });
     }
 
-    initialize();
+    bindAudioEvents(music);
 
-    /* =========================================
-       VIP MUSIC PLAYER + AUTO-COLLAPSE DRAWER
-    ========================================= */
-    const music = document.getElementById("bg-music");
-    const musicBanner = document.getElementById("music-banner");
-    const musicButton = document.getElementById("music-button");
-    const playPauseIcon = document.getElementById("play-pause-icon");
-    const musicInfoTrigger = document.getElementById("music-info-trigger");
-    const musicStatus = document.getElementById("music-status");
-    const musicProgressBar = document.getElementById("music-progress-bar");
-    const eqBarsContainer = document.getElementById("eq-bars");
-    const eqBars = document.querySelectorAll(".eq-bar");
+    function rebuildAudioElementWithoutCors(srcUrl) {
+      useSimulatedBeat = true;
+      const freshAudio = document.createElement("audio");
+      freshAudio.id = "bg-music";
+      freshAudio.preload = "auto";
+      freshAudio.volume = Number(volumeWheel.value) / 100;
+      freshAudio.src = srcUrl;
 
-    const volumeWheel = document.getElementById("volume-wheel");
-    const volumeValue = document.getElementById("volume-value");
-    const volumeIcon = document.getElementById("volume-icon");
-    const volumeSvg = document.getElementById("volume-svg");
-
-    const ICON_PLAY = '<path d="M8 5.14v14l11-7-11-7z"/>';
-    const ICON_PAUSE = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
-    const ICON_VOL_HIGH = '<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>';
-    const ICON_VOL_LOW = '<path d="M7 9v6h4l5 5V4l-5 5H7zm11.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/>';
-    const ICON_VOL_MUTE = '<path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>';
-
-    let audioContext = null;
-    let analyser = null;
-    let source = null;
-    let frequencyData = null;
-    let useSimulatedBeat = false;
-
-    let animationId = null;
-    let beatPulse = 0;
-    let averageBass = 0;
-    let lastBeatTime = 0;
-    let volumeTimeout = null;
-    let isPointerInside = false;
-    let lastSavedVolume = Number(localStorage.getItem("bacii_volume") ?? 70);
+      music.pause();
+      music.replaceWith(freshAudio);
+      music = freshAudio;
+      bindAudioEvents(music);
+    }
 
     function applyVolume(vol) {
       music.volume = vol / 100;
@@ -1301,8 +1735,6 @@
       localStorage.setItem("bacii_volume", String(vol));
     }
 
-    applyVolume(lastSavedVolume);
-
     function showVolume(duration = 2200) {
       musicBanner.classList.add("volume-visible");
       clearTimeout(volumeTimeout);
@@ -1312,6 +1744,186 @@
         }, duration);
       }
     }
+
+    function renderPlaylistUI() {
+      playlistTracks.innerHTML = "";
+      playlistCount.textContent = `${PLAYLIST.length} បទ`;
+
+      PLAYLIST.forEach((track, idx) => {
+        const isCurrent = idx === currentTrackIndex;
+        const item = document.createElement("div");
+        item.className = `playlist-item ${isCurrent ? "active" : ""}`;
+
+        const nameSpan = document.createElement("span");
+        nameSpan.className = "playlist-item-name";
+        nameSpan.textContent = `${idx + 1}. ${track.title}`;
+        item.appendChild(nameSpan);
+
+        if (isCurrent) {
+          const statusSpan = document.createElement("span");
+          statusSpan.className = "playlist-item-playing-icon";
+          statusSpan.textContent = music.paused ? "● SELECTED" : "▶ PLAYING";
+          item.appendChild(statusSpan);
+        }
+
+        item.addEventListener("click", (e) => {
+          e.stopPropagation();
+          if (idx === currentTrackIndex) {
+            toggleMusic();
+          } else {
+            loadTrack(idx, true);
+          }
+        });
+
+        playlistTracks.appendChild(item);
+      });
+    }
+
+    function setupAudioAnalyzer() {
+      if (audioContext || useSimulatedBeat) return;
+      try {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioContext.createAnalyser();
+        analyser.fftSize = 2048;
+        analyser.smoothingTimeConstant = 0.25;
+
+        source = audioContext.createMediaElementSource(music);
+        source.connect(analyser);
+        analyser.connect(audioContext.destination);
+
+        frequencyData = new Uint8Array(analyser.frequencyBinCount);
+      } catch (err) {
+        console.warn("Web Audio Analyzer fallback enabled:", err);
+        useSimulatedBeat = true;
+      }
+    }
+
+    async function safePlayCurrentTrack(requestId) {
+      musicStatus.textContent = "LOADING...";
+
+      try {
+        setupAudioAnalyzer();
+        if (audioContext && audioContext.state === "suspended") {
+          await audioContext.resume();
+        }
+
+        const playPromise = music.play();
+        if (playPromise !== undefined) {
+          await playPromise;
+        }
+
+        if (requestId !== playRequestId) return;
+        setPlayingUI(true);
+      } catch (error) {
+        if (error.name === "AbortError" || requestId !== playRequestId) {
+          return;
+        }
+
+        console.warn("CORS restriction on track, switching to direct audio output...", error);
+        const currentSrc = PLAYLIST[currentTrackIndex].src;
+        rebuildAudioElementWithoutCors(currentSrc);
+
+        try {
+          await music.play();
+          if (requestId !== playRequestId) return;
+          setPlayingUI(true);
+        } catch (finalError) {
+          if (finalError.name !== "AbortError") {
+            console.error("Track cannot be played:", finalError);
+            musicStatus.textContent = "ERROR";
+            setPlayingUI(false);
+          }
+        }
+      }
+    }
+
+    function loadTrack(index, autoPlay = true) {
+      if (index < 0) index = PLAYLIST.length - 1;
+      if (index >= PLAYLIST.length) index = 0;
+
+      currentTrackIndex = index;
+      localStorage.setItem("bacii_track_idx", String(index));
+
+      const track = PLAYLIST[index];
+      const currentReqId = ++playRequestId;
+
+      music.pause();
+      musicProgressBar.style.width = "0%";
+      musicName.textContent = track.title;
+
+      if (!useSimulatedBeat) {
+        music.crossOrigin = "anonymous";
+      } else {
+        music.removeAttribute("crossorigin");
+      }
+
+      music.src = track.src;
+      music.load();
+      renderPlaylistUI();
+
+      if (autoPlay) {
+        safePlayCurrentTrack(currentReqId);
+      } else {
+        musicStatus.textContent = "READY";
+      }
+    }
+
+    async function toggleMusic() {
+      showVolume(2600);
+      const currentReqId = ++playRequestId;
+
+      if (music.paused) {
+        await safePlayCurrentTrack(currentReqId);
+      } else {
+        music.pause();
+        setPlayingUI(false);
+      }
+    }
+
+    function playNextTrack() {
+      loadTrack(currentTrackIndex + 1, true);
+    }
+
+    function playPrevTrack() {
+      if (music.currentTime > 4) {
+        music.currentTime = 0;
+      } else {
+        loadTrack(currentTrackIndex - 1, true);
+      }
+    }
+
+    function setPlayingUI(isPlaying) {
+      if (isPlaying) {
+        playPauseIcon.innerHTML = ICON_PAUSE;
+        musicStatus.textContent = "NOW PLAYING";
+        musicBanner.classList.add("is-playing");
+        eqBarsContainer.classList.add("playing");
+        document.body.classList.add("audio-reactive");
+        startBeatEffect();
+      } else {
+        playPauseIcon.innerHTML = ICON_PLAY;
+        if (musicStatus.textContent !== "ERROR") {
+          musicStatus.textContent = "PAUSED";
+        }
+        musicBanner.classList.remove("is-playing");
+        eqBarsContainer.classList.remove("playing");
+        stopBeatEffect();
+      }
+      renderPlaylistUI();
+    }
+
+    /* =========================================
+       6. EVENT LISTENERS
+    ========================================= */
+    musicButton.addEventListener("click", toggleMusic);
+    prevTrackBtn.addEventListener("click", playPrevTrack);
+    nextTrackBtn.addEventListener("click", playNextTrack);
+
+    /* Club Mode Toggle Button */
+    clubToggleBtn.addEventListener("click", () => {
+      document.body.classList.toggle("club-mode-on");
+      clubToggleBtn.classList.toggle("active");
+    });
 
     musicBanner.addEventListener("mouseenter", () => {
       isPointerInside = true;
@@ -1328,78 +1940,42 @@
       showVolume(2800);
     });
 
-    function setupAudioAnalyzer() {
-      if (audioContext || useSimulatedBeat) return;
-      try {
-        audioContext = new (
-          window.AudioContext || window.webkitAudioContext
-        )();
-        analyser = audioContext.createAnalyser();
-        analyser.fftSize = 2048;
-        analyser.smoothingTimeConstant = 0.25;
+    playlistToggle.addEventListener("click", (e) => {
+      e.stopPropagation();
+      playlistDrawer.classList.toggle("open");
+      playlistToggle.classList.toggle("active");
+    });
 
-        source = audioContext.createMediaElementSource(music);
-        source.connect(analyser);
-        analyser.connect(audioContext.destination);
-
-        frequencyData = new Uint8Array(analyser.frequencyBinCount);
-      } catch (err) {
-        console.warn("Web Audio Analyzer fallback enabled:", err);
-        useSimulatedBeat = true;
+    document.addEventListener("click", (e) => {
+      if (!playlistDrawer.contains(e.target) && !playlistToggle.contains(e.target)) {
+        playlistDrawer.classList.remove("open");
+        playlistToggle.classList.remove("active");
       }
-    }
+    });
 
-    async function toggleMusic() {
-      showVolume(2600);
+    addLocalBtn.addEventListener("click", () => {
+      localAudioInput.click();
+    });
 
-      if (music.paused) {
-        try {
-          setupAudioAnalyzer();
-          if (audioContext && audioContext.state === "suspended") {
-            await audioContext.resume();
-          }
+    localAudioInput.addEventListener("change", (e) => {
+      const files = Array.from(e.target.files || []);
+      if (!files.length) return;
 
-          await music.play();
-          setPlayingUI(true);
-        } catch (error) {
-          console.warn("Retrying audio without CORS restriction...", error);
-          useSimulatedBeat = true;
-          music.removeAttribute("crossorigin");
-          music.load();
-          try {
-            await music.play();
-            setPlayingUI(true);
-          } catch (finalError) {
-            console.error("Music Error:", finalError);
-            setPlayingUI(false);
-          }
-        }
-      } else {
-        music.pause();
-        setPlayingUI(false);
-      }
-    }
+      files.forEach((file) => {
+        const cleanName = file.name.replace(/\.[^/.]+$/, "");
+        const blobUrl = URL.createObjectURL(file);
+        PLAYLIST.push({
+          title: cleanName,
+          src: blobUrl,
+          isLocal: true
+        });
+      });
 
-    function setPlayingUI(isPlaying) {
-      if (isPlaying) {
-        playPauseIcon.innerHTML = ICON_PAUSE;
-        musicStatus.textContent = "NOW PLAYING";
-        musicBanner.classList.add("is-playing");
-        eqBarsContainer.classList.add("playing");
-        document.body.classList.add("audio-reactive");
-        startBeatEffect();
-      } else {
-        playPauseIcon.innerHTML = ICON_PLAY;
-        musicStatus.textContent = "PAUSED";
-        musicBanner.classList.remove("is-playing");
-        eqBarsContainer.classList.remove("playing");
-        stopBeatEffect();
-      }
-    }
+      const newestIndex = PLAYLIST.length - files.length;
+      loadTrack(newestIndex, true);
+      localAudioInput.value = "";
+    });
 
-    musicButton.addEventListener("click", toggleMusic);
-
-    /* VOLUME & MUTE CONTROLS */
     volumeWheel.addEventListener("input", () => {
       const volume = Number(volumeWheel.value);
       if (volume > 0) lastSavedVolume = volume;
@@ -1416,15 +1992,9 @@
       showVolume(2500);
     });
 
-    /* SONG TIME PROGRESS */
-    music.addEventListener("timeupdate", () => {
-      if (music.duration) {
-        const pct = (music.currentTime / music.duration) * 100;
-        musicProgressBar.style.width = pct.toFixed(1) + "%";
-      }
-    });
-
-    /* REAL-TIME BASS DETECTION + EQUALIZER */
+    /* =========================================
+       7. REAL-TIME BASS + CLUB RGB HUE ENGINE
+    ========================================= */
     function startBeatEffect() {
       cancelAnimationFrame(animationId);
       beatPulse = 0;
@@ -1442,10 +2012,7 @@
 
           const binHz = audioContext.sampleRate / analyser.fftSize;
           const startBin = Math.max(1, Math.floor(35 / binHz));
-          const endBin = Math.min(
-            frequencyData.length - 1,
-            Math.ceil(150 / binHz)
-          );
+          const endBin = Math.min(frequencyData.length - 1, Math.ceil(150 / binHz));
 
           let count = 0;
           for (let i = startBin; i <= endBin; i++) {
@@ -1473,10 +2040,13 @@
         if (bass > threshold && now - lastBeatTime > 180) {
           beatPulse = Math.min(1, Math.max(0.45, bass / 120));
           lastBeatTime = now;
+          // Shift club neon hue on strong bass hits
+          clubHue = (clubHue + 45) % 360;
         }
 
         averageBass = averageBass * 0.94 + bass * 0.06;
         beatPulse *= 0.88;
+        clubHue = (clubHue + 0.6) % 360;
 
         const beat = beatPulse;
         const scale = 1 + beat * 0.055;
@@ -1488,6 +2058,7 @@
         root.style.setProperty("--beat-x", shakeX + "px");
         root.style.setProperty("--beat-y", shakeY + "px");
         root.style.setProperty("--beat-glow", beat);
+        root.style.setProperty("--club-hue", clubHue.toFixed(0) + "deg");
 
         animationId = requestAnimationFrame(animate);
       }
@@ -1509,6 +2080,21 @@
       root.style.setProperty("--beat-y", "0px");
       root.style.setProperty("--beat-glow", "0");
     }
+
+    /* =========================================
+       8. START APPLICATION
+    ========================================= */
+    function initialize() {
+      createParticles();
+      applyVolume(lastSavedVolume);
+      loadTrack(currentTrackIndex, false);
+      updateCountdown();
+      updateCurrentTime();
+      setInterval(updateCountdown, 1000);
+      setInterval(updateCurrentTime, 1000);
+    }
+
+    initialize();
   </script>
 
 </body>
